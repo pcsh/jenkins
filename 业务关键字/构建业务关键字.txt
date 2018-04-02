@@ -21,11 +21,11 @@ Resource          ../公共库/public.txt
     [Arguments]    ${BUILD_URL}
     登录Jenkins
     log    ---- 构建地址：${BUILD_URL}
-    go to    ${BUILD_URL}    #打开费用稽核前台构建页面
+    go to    ${BUILD_URL}    #打开构建页面
     Click Element    xpath=//img[@alt='Trigger a Pipeline']
-    Wait Until Element Is Visible    xpath=//iframe[@id='fancybox-frame']    15    Fail:打开构建配置页面失败
+    Wait Until Element Is Visible    xpath=//iframe[@id='fancybox-frame']    3    Fail:打开构建配置页面失败
     Select Frame    fancybox-frame
-    Wait Until Element Is Visible    xpath=//form[@name='parameters']    15    Fail:打开构建配置参数失败
+    Wait Until Element Is Visible    xpath=//form[@name='parameters']    3    Fail:打开构建配置参数失败
 
 登录Jenkins
     登录    ${JENKINS_URL}    ff    ${USERNAME}    ${PASSWORD}    xpath=//a[@href='/user/cspan']
@@ -33,8 +33,13 @@ Resource          ../公共库/public.txt
 选择版本号
     [Arguments]    ${GIT_VERSION}
     log    ---- 构建版本：${GIT_VERSION}
-    Wait Until Element is Visible    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']    15    Fail：版本号加载失败
-    Click Element    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']
+    Wait Until Element is Visible    id=select
+    Click Element    xpath=//select[@id='select']/option[@value='origin/${GIT_VERSION}']
+    Comment    Wait Until Element is Visible    xpath=//input[@value='gitBranch']
+    Comment    Click Element    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']    #../表示当前节点的父节点
+    Comment    Click Element    xpath=//input[@value='gitBranch']/following-sibling::select/option[@value='origin/${GIT_VERSION}']    #当前节点的兄弟节点following-sibling::
+    #如果失败，则继续执行，最多5次，每次间隔200ms执行
+    Comment    Wait Until Keyword Succeeds    5x    200ms    Click Element    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']
 
 输入版本号
     [Arguments]    ${GIT_VERSION}
@@ -44,9 +49,15 @@ Resource          ../公共库/public.txt
 选择构建环境及IP
     [Arguments]    ${ENV_NAME}    ${SERVER_IP}
     log    ---- 构建环境：${ENV_NAME}
-    ${is_visiable}    Run Keyword And Return Status    Element Should Be Visible    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']    #环境配置名称不统一，加个判断
-    Run Keyword If    '${is_visiable}'=='True'    Click Element    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']
-    Run Keyword If    '${is_visiable}'=='False'    Click Element    xpath=//input[@value='profile']/../select/option[@value='${ENV_NAME}']
+    ${Seting_name_Elements}    Get WebElements    xpath=//td[@class='setting-name']
+    ${Seting_name_select}    Get Text    ${Seting_name_Elements[1]}    #从0开始计数,选择版本号情况为第2个
+    ${Seting_name_input}    Get Text    ${Seting_name_Elements[2]}    #从0开始计数,输入版本号情况为第3个
+    Run Keyword If    '${Seting_name_input}'=='envName'    Click Element    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']
+    ...    ELSE IF    '${Seting_name_select}'=='profile'    Click Element    xpath=//input[@value='profile']/../select/option[@value='${ENV_NAME}']
+    ...    ELSE    FAIL    FAIL：没有匹配的环境设置名称
+    Comment    ${is_visiable}    Run Keyword And Return Status    Element Should Be Visible    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']    #环境配置名称不统一，加个判断
+    Comment    Run Keyword If    '${is_visiable}'=='True'    Click Element    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']
+    Comment    Run Keyword If    '${is_visiable}'=='False'    Click Element    xpath=//input[@value='profile']/../select/option[@value='${ENV_NAME}']
     log    ---- 构建服务器：${SERVER_IP}
     Click Element    xpath=//input[@value='serverIp']/../select/option[@value='${SERVER_IP}']
 
@@ -57,7 +68,7 @@ Resource          ../公共库/public.txt
 
 单击构建
     Click Element    id=yui-gen1-button
-    Wait Until Element Is Not Visible    id=yui-gen1-button    15    Fail：构建按钮还在
+    Comment    Wait Until Element Is Not Visible    id=yui-gen1-button    15    Fail：构建按钮还在
     Unselect Frame
     Click Element    id=fancybox-close
 
