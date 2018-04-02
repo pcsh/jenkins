@@ -1,0 +1,19 @@
+*** Settings ***
+Resource          ../配置/beta环境.txt
+Resource          ../业务关键字/构建业务关键字.txt
+
+*** Test Cases ***
+测试登录
+    [Template]    登录
+    #地址    #浏览器类型    #用户名    #密码    #断言
+    ${globalvars['JENKINS_URL']}    ff    ${globalvars['USERNAME']}    ${globalvars['PASSWORD']}    xpath=//a[@href='/user/cspan']
+
+打开报销前台构建页面
+    [Template]    输入版本号需选择2个项目构建
+    #URL    #gitVersion    #环境    #IP    #工程1    #工程2
+    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}    service    web
+
+审核引擎构建
+    [Template]    选择版本号无需选择项目构建
+    #URL    #版本号    #环境    #IP
+    http://172.16.11.54:9999/job/smartcheck/view/ms_build/    release-qybx-1.4.4    test    172.16.6.78

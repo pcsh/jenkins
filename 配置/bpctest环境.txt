@@ -1,0 +1,2 @@
+*** Settings ***
+Variables         jenkins_variables.py    bpc

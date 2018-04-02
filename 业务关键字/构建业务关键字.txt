@@ -1,0 +1,86 @@
+*** Settings ***
+Resource          ../配置/公共配置.txt
+Resource          ../公共库/public.txt
+
+*** Keywords ***
+登录
+    [Arguments]    ${url}    ${browser}    ${username}    ${password}    ${assertmsg}
+    log    Jenkins地址：${url}
+    log    用户名：${username} & ${password}
+    Open Browser    ${url}    ${browser}
+    Maximize Browser Window
+    Set Selenium Implicit Wait    15
+    Clear Element Text    id=j_username
+    Input Text    id=j_username    ${username}
+    Clear Element Text    name=j_password
+    Input Text    name=j_password    ${password}
+    Click Element    id=yui-gen1-button
+    Wait Until Element Is Visible    ${assertmsg}    10    Fail:${username}登录Jenkins失败
+
+打开构建页面
+    [Arguments]    ${BUILD_URL}
+    登录Jenkins
+    log    ---- 构建地址：${BUILD_URL}
+    go to    ${BUILD_URL}    #打开费用稽核前台构建页面
+    Click Element    xpath=//img[@alt='Trigger a Pipeline']
+    Wait Until Element Is Visible    xpath=//iframe[@id='fancybox-frame']    15    Fail:打开构建配置页面失败
+    Select Frame    fancybox-frame
+    Wait Until Element Is Visible    xpath=//form[@name='parameters']    15    Fail:打开构建配置参数失败
+
+登录Jenkins
+    登录    ${JENKINS_URL}    ff    ${USERNAME}    ${PASSWORD}    xpath=//a[@href='/user/cspan']
+
+选择版本号
+    [Arguments]    ${GIT_VERSION}
+    log    ---- 构建版本：${GIT_VERSION}
+    Wait Until Element is Visible    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']    15    Fail：版本号加载失败
+    Click Element    xpath=//input[@value='gitBranch']/../select/option[@value='origin/${GIT_VERSION}']
+
+输入版本号
+    [Arguments]    ${GIT_VERSION}
+    log    ---- 构建版本：${GIT_VERSION}
+    Input Text    xpath=//input[@value='gitRevision']/../input[2]    ${GIT_VERSION}
+
+选择构建环境及IP
+    [Arguments]    ${ENV_NAME}    ${SERVER_IP}
+    log    ---- 构建环境：${ENV_NAME}
+    ${is_visiable}    Run Keyword And Return Status    Element Should Be Visible    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']    #环境配置名称不统一，加个判断
+    Run Keyword If    '${is_visiable}'=='True'    Click Element    xpath=//input[@value='envName']/../select/option[@value='${ENV_NAME}']
+    Run Keyword If    '${is_visiable}'=='False'    Click Element    xpath=//input[@value='profile']/../select/option[@value='${ENV_NAME}']
+    log    ---- 构建服务器：${SERVER_IP}
+    Click Element    xpath=//input[@value='serverIp']/../select/option[@value='${SERVER_IP}']
+
+选择构建项
+    [Arguments]    ${PROJECT}
+    log    ---- 构建工程1：${PROJECT}
+    Click Element    xpath=//input[@value='${PROJECT}']/../input[2]
+
+单击构建
+    Click Element    id=yui-gen1-button
+    Wait Until Element Is Not Visible    id=yui-gen1-button    15    Fail：构建按钮还在
+    Unselect Frame
+    Click Element    id=fancybox-close
+
+构建方式为输入版本号
+    [Arguments]    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}
+    打开构建页面    ${BUILD_URL}
+    输入版本号    ${GIT_VERSION}
+    选择构建环境及IP    ${ENV_NAME}    ${SERVER_IP}
+
+构建方式为选择版本号
+    [Arguments]    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}
+    打开构建页面    ${BUILD_URL}
+    选择版本号    ${GIT_VERSION}
+    选择构建环境及IP    ${ENV_NAME}    ${SERVER_IP}
+
+选择版本号无需选择项目构建
+    [Arguments]    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}
+    构建方式为选择版本号    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}
+    单击构建
+
+输入版本号需选择2个项目构建
+    [Arguments]    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}    ${PROJECT1}    ${PROJECT2}
+    构建方式为输入版本号    ${BUILD_URL}    ${GIT_VERSION}    ${ENV_NAME}    ${SERVER_IP}
+    选择构建项    ${PROJECT1}
+    选择构建项    ${PROJECT2}
+    单击构建

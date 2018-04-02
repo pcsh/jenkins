@@ -1,0 +1,18 @@
+*** Settings ***
+Resource          ../业务关键字/构建业务关键字.txt
+
+*** Test Cases ***
+1_bpc_构建费用稽核前台
+    [Template]    输入版本号需选择2个项目构建
+    #URL    #版本号    #环境    #IP    #工程1    #工程2
+    ${ENT_FRONT_END_URL}    ${GIT_VERSION}    ${BPC_ENV_NAME}    ${BPC_SERVER_IP_51}    service    web
+
+2_test_构建费用稽核前台
+    [Template]    输入版本号需选择2个项目构建
+    #URL    #版本号    #环境    #IP    #工程1    #工程2
+    ${ENT_FRONT_END_URL}    ${GIT_VERSION}    ${TEST_ENV_NAME}    172.16.11.56    service    web
+
+3_beta_构建费用稽核前台
+    [Template]    输入版本号需选择2个项目构建
+    #URL    #版本号    #环境    #IP    #工程1    #工程2
+    ${ENT_FRONT_END_URL}    ${GIT_VERSION}    BETA_ENV_NAME    172.16.202.3    service    web

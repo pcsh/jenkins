@@ -1,0 +1,19 @@
+*** Settings ***
+Documentation     变量文件使用例子
+Resource          ../配置/test环境.txt
+Library           Collections
+Variables         ../配置/variables.py
+Variables         ../配置/py_variables.py    product
+
+*** Test Cases ***
+test
+    ${a}=    set variable    ${VARIABLE}
+    log    ${a}
+    log many    @{STRINGS}    #打印列表用log many
+    log    ${INTEGER}
+    log many    &{MAPPING}    #打印字典用log many
+    &{Temp_mapping}=    Create Dictionary    &{MAPPING}    #将变量文件中的字典变量映射到当前变量
+    log    ${Temp_mapping.one}    #获取字典值方法
+    log    ${MAPPING['one']}    #获取字典值方法
+    ${py_variable}=    set variable    ${mainurl}    #获取变量文件中python写的get_variables变量
+    log    ${py_variable}

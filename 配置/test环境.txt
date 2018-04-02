@@ -1,0 +1,4 @@
+*** Settings ***
+Variables         jenkins_variables.py    test    #变量文件必须包含variables
+
+*** Variables ***
