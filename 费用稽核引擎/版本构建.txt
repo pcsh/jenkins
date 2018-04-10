@@ -1,4 +1,5 @@
 *** Settings ***
+Suite Teardown    Close All Browsers
 Resource          ../业务关键字/构建业务关键字.txt
 Resource          ../配置/公共配置.txt
 

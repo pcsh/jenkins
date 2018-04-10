@@ -1,5 +1,6 @@
 *** Settings ***
 Documentation     这里只针对es_web和es_service
+Suite Teardown    Close All Browsers
 Resource          ../业务关键字/构建业务关键字.txt
 
 *** Test Cases ***

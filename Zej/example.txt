@@ -4,6 +4,7 @@ Resource          ../配置/test环境.txt
 Library           Collections
 Variables         ../配置/variables.py
 Variables         ../配置/py_variables.py    product
+Resource          ../公共库/public.txt
 
 *** Test Cases ***
 test
@@ -17,3 +18,15 @@ test
     log    ${MAPPING['one']}    #获取字典值方法
     ${py_variable}=    set variable    ${mainurl}    #获取变量文件中python写的get_variables变量
     log    ${py_variable}
+    ${L}    Create List    a
+    ${LENGTH}    Get Length    ${L}
+    ${X}    Set Variable
+    ${x}=    Get From List    ${L}    0
+    log    ${x}
+
+Read Excel
+    Open Excel    D:\\自动化测试\\Jenkins\\Zej\\rules.xls
+    Get Row Count    Sheet1
+    ${biz_no}    Read Cell Data By Name    Sheet1    C3
+    ${biz_no}    Evaluate    unicode(str(int(${biz_no})),"utf-8")
+    log    ${biz_no}
