@@ -6,7 +6,7 @@ Resource          ../业务关键字/构建业务关键字.txt
 1_bpc_构建base服务
     [Template]    选择版本号无需选择项目构建
     #URL    #版本号    #环境    #IP
-    ${BASE_SERVICE_URL}    ${GIT_VERSION}    ${BPC_ENV_NAME}    ${BPC_SERVER_IP_51}
+    ${BASE_SERVICE_URL}    release-qybx-2.0    ${BPC_ENV_NAME}    ${BPC_SERVER_IP_51}
 
 2_test_构建base服务
     [Template]    选择版本号无需选择项目构建

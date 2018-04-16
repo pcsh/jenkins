@@ -6,7 +6,7 @@ Resource          ../业务关键字/构建业务关键字.txt
 1_bpc_构建费用稽核前台
     [Template]    输入版本号需选择2个项目构建
     #URL    #版本号    #环境    #IP    #工程1    #工程2
-    ${ENT_FRONT_END_URL}    ${GIT_VERSION}    ${BPC_ENV_NAME}    ${BPC_SERVER_IP_51}    service    web
+    ${ENT_FRONT_END_URL}    release-qybx-2.0    ${BPC_ENV_NAME}    ${BPC_SERVER_IP_51}    service    web
 
 2_test_构建费用稽核前台
     [Template]    输入版本号需选择2个项目构建

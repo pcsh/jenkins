@@ -30,3 +30,19 @@ Read Excel
     ${biz_no}    Read Cell Data By Name    Sheet1    C3
     ${biz_no}    Evaluate    unicode(str(int(${biz_no})),"utf-8")
     log    ${biz_no}
+
+如果失败则重复执行
+    ${a}    Set Variable    1
+    ${b}    Set Variable    2
+    ${is_login}=    Set Variable    False
+    ${i}=    Set Variable    0
+    :FOR    ${i}    IN RANGE    3
+    \    ${is_login}=    Run Keyword And Return Status    测试用的关键字    ${a}    ${b}
+    \    Run Keyword If    '${is_login}' == 'True'    Exit For Loop
+    \    Run Keyword If    ${i} == 2    Fail    ---- Fail：重试执行三次仍然失败！
+    \    Close Browser
+
+*** Keywords ***
+测试用的关键字
+    [Arguments]    ${a}    ${b}
+    Should Be Equal    ${a}    ${b}
