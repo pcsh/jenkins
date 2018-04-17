@@ -5,6 +5,7 @@ Library           Collections
 Variables         ../配置/variables.py
 Variables         ../配置/py_variables.py    product
 Resource          ../公共库/public.txt
+Library           OperatingSystem
 
 *** Test Cases ***
 test
@@ -36,11 +37,18 @@ Read Excel
     ${b}    Set Variable    2
     ${is_login}=    Set Variable    False
     ${i}=    Set Variable    0
-    :FOR    ${i}    IN RANGE    3
+    : FOR    ${i}    IN RANGE    3
     \    ${is_login}=    Run Keyword And Return Status    测试用的关键字    ${a}    ${b}
     \    Run Keyword If    '${is_login}' == 'True'    Exit For Loop
     \    Run Keyword If    ${i} == 2    Fail    ---- Fail：重试执行三次仍然失败！
     \    Close Browser
+
+获取当前路径和临时目录
+    Log    临时目录：${TEMPDIR}
+    Log    当前目录：${CURDIR}
+    Comment    @{items}=    List Directory    ${TEMPDIR}
+    Comment    @{files}=    List Files In Directory    /tmp    *.txt    absolute
+    ${count}=    Count Files In Directory    ${CURDIR}    ???
 
 *** Keywords ***
 测试用的关键字
